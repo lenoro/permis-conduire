@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Document } from '../../../types';
+import type { Document } from '../../../types';
 import { getDocuments, addDocument, updateDocument, deleteDocument } from '../../../api/documentApi';
 
 const TYPES_DOCS = ['Certificat médical', "Photo d'identité", 'Justificatif résidence',

@@ -1,33 +1,42 @@
 version: '3.8'
+
 services:
-  db:
-    image: postgres:16
+  permis_db:
+    image: postgres:15
+    restart: unless-stopped
     environment:
       POSTGRES_DB: permis_db
       POSTGRES_USER: permis_user
-      POSTGRES_PASSWORD: permis_pass
-    ports:
-      - "5432:5432"
+      POSTGRES_PASSWORD: Permis2026!
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - permis_db_data:/var/lib/postgresql/data
+    networks:
+      - permis_net
 
-  backend:
+  permis_backend:
     build: ./backend
-    ports:
-      - "8080:8080"
+    restart: unless-stopped
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/permis_db
+      SPRING_DATASOURCE_URL: jdbc:postgresql://permis_db:5432/permis_db
       SPRING_DATASOURCE_USERNAME: permis_user
-      SPRING_DATASOURCE_PASSWORD: permis_pass
+      SPRING_DATASOURCE_PASSWORD: Permis2026!
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
     depends_on:
-      - db
+      - permis_db
+    networks:
+      - permis_net
 
-  frontend:
+  permis_frontend:
     build: ./frontend/permis-app
-    ports:
-      - "5173:80"
-    depends_on:
-      - backend
+    restart: unless-stopped
+    networks:
+      - permis_net
+      - proxy_net
+
+networks:
+  permis_net:
+  proxy_net:
+    external: true
 
 volumes:
-  pgdata:
+  permis_db_data:

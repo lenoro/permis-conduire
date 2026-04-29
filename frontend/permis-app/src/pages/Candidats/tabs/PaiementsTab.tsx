@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Paiement } from '../../../types';
+import type { Paiement } from '../../../types';
 import { getPaiements, addPaiement, deletePaiement } from '../../../api/paiementApi';
 
 const MODES = ['Espèces', 'Chèque', 'CCP'];

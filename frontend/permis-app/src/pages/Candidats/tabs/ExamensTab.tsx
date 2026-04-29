@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Examen, TypeEpreuve, ResultatExamen } from '../../../types';
+import type { Examen, TypeEpreuve, ResultatExamen } from '../../../types';
 import { getExamens, addExamen, deleteExamen } from '../../../api/examenApi';
 import Badge from '../../../components/Badge';
 

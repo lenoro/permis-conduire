@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Candidat, StatutDossier } from '../../types';
+import type { Candidat, StatutDossier } from '../../types';
 import { getCandidats, deleteCandidat } from '../../api/candidatApi';
 import { getStatuts } from '../../api/etatApi';
 import TopBar from '../../components/TopBar';

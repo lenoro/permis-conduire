@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Candidat } from '../../types';
+import type { Candidat } from '../../types';
 import InfosTab from './tabs/InfosTab';
 import DocumentsTab from './tabs/DocumentsTab';
 import ExamensTab from './tabs/ExamensTab';

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Candidat, StatutDossier } from '../../../types';
+import type { Candidat, StatutDossier } from '../../../types';
 import { createCandidat, updateCandidat } from '../../../api/candidatApi';
 
 const STATUTS: StatutDossier[] = ['INCOMPLET', 'EN_COURS', 'VALIDE', 'ARCHIVE'];

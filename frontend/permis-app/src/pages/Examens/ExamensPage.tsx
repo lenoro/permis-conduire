@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Examen } from '../../types';
+import type { Examen } from '../../types';
 import { getAllExamens } from '../../api/examenApi';
 import TopBar from '../../components/TopBar';
 import Badge from '../../components/Badge';

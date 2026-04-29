@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Paiement } from '../../types';
+import type { Paiement } from '../../types';
 import { getAllPaiements } from '../../api/paiementApi';
 import TopBar from '../../components/TopBar';
 

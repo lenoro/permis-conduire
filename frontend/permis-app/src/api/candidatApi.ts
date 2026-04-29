@@ -1,7 +1,7 @@
 import axios from 'axios';
-import { Candidat } from '../types';
+import type { Candidat } from '../types';
 
-const BASE = 'http://localhost:8080/api/candidats';
+const BASE = '/api/candidats';
 const auth = { username: 'admin', password: '123' };
 
 export const getCandidats = (statut?: string, q?: string) => {
