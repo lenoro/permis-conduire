@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import type { Examen, TypeEpreuve, ResultatExamen } from '../../../types';
-import { getExamens, addExamen, deleteExamen } from '../../../api/examenApi';
+import type { Examen, TypeEpreuve, ResultatExamen, StatutExamen } from '../../../types';
+import { getExamens, addExamen, deleteExamen, annulerExamen } from '../../../api/examenApi';
 import Badge from '../../../components/Badge';
 
 export default function ExamensTab({ candidatId }: { candidatId: number }) {
@@ -21,6 +21,12 @@ export default function ExamensTab({ candidatId }: { candidatId: number }) {
   };
 
   const del = async (id: number) => { await deleteExamen(id); load(); };
+
+  const handleAnnuler = async (id: number) => {
+    if (!confirm('Confirmer l\'annulation ?')) return;
+    await annulerExamen(id);
+    load();
+  };
 
   return (
     <div>
@@ -73,13 +79,23 @@ export default function ExamensTab({ candidatId }: { candidatId: number }) {
             <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
               <Badge value={e.typeEpreuve} />
               <Badge value={e.resultat ?? ''} />
+              <span style={{ background: (e.statut as StatutExamen) === 'PLANIFIE' ? '#fff3e0' : (e.statut as StatutExamen) === 'ANNULE' ? '#ffebee' : '#e8f5e9', padding: '2px 8px', borderRadius: 4, fontSize: 11 }}>{e.statut ?? 'PLANIFIE'}</span>
             </div>
             <div style={{ fontSize: 12, color: '#888', marginTop: 4 }}>{e.dateExamen?.slice(0, 16)}</div>
             {e.observation && <div style={{ fontSize: 12, color: '#555' }}>{e.observation}</div>}
           </div>
-          <button onClick={() => del(e.id!)}
-            style={{ padding: '4px 12px', fontSize: 12, border: 'none', borderRadius: 4,
-                     cursor: 'pointer', background: '#ffebee', color: '#c62828' }}>✕</button>
+          <div style={{ display: 'flex', gap: 6 }}>
+            {(e.statut === 'PLANIFIE' || !e.statut) && (
+              <button onClick={() => handleAnnuler(e.id!)}
+                style={{ padding: '4px 10px', fontSize: 11, border: '1px solid #d32f2f', borderRadius: 4,
+                         cursor: 'pointer', background: 'none', color: '#d32f2f' }}>
+                Annuler
+              </button>
+            )}
+            <button onClick={() => del(e.id!)}
+              style={{ padding: '4px 12px', fontSize: 12, border: 'none', borderRadius: 4,
+                       cursor: 'pointer', background: '#ffebee', color: '#c62828' }}>✕</button>
+          </div>
         </div>
       ))}
     </div>
