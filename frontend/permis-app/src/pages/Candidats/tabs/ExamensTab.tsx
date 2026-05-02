@@ -33,7 +33,7 @@ export default function ExamensTab({ candidatId }: { candidatId: number }) {
     if (!confirm('Confirmer l\'annulation ?')) return;
     try {
       await annulerExamen(id);
-      load();
+      await load();
     } catch {
       alert('Erreur lors de l\'annulation');
     }
