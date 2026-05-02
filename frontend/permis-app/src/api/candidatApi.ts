@@ -26,10 +26,7 @@ export const deleteCandidat = (id: number) =>
 export const uploadPhoto = (id: number, file: File): Promise<Candidat> => {
   const form = new FormData();
   form.append('file', file);
-  return axios.post<Candidat>(`${BASE}/${id}/photo`, form, {
-    auth,
-    headers: { 'Content-Type': 'multipart/form-data' },
-  }).then(r => r.data);
+  return axios.post<Candidat>(`${BASE}/${id}/photo`, form, { auth }).then(r => r.data);
 };
 
 export const getPhotoUrl = (id: number): string =>
