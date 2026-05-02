@@ -68,7 +68,7 @@ export default function BatchExamenModal({ onClose, onSaved }: Props) {
               {candidats.map(c => (
                 <div key={c.id} onClick={() => toggle(c.id)}
                   style={{ padding: '8px 12px', display: 'flex', alignItems: 'center', gap: 10, borderBottom: '1px solid #f0f0f0', cursor: 'pointer', background: selected.has(c.id) ? '#e8f0fe' : 'white' }}>
-                  <input type="checkbox" checked={selected.has(c.id)} readOnly />
+                  <input type="checkbox" checked={selected.has(c.id)} onChange={() => toggle(c.id)} />
                   <span>{c.nom} {c.prenom}</span>
                   <span style={{ marginLeft: 'auto', fontSize: 12, color: '#999' }}>{c.statutDossier}</span>
                 </div>

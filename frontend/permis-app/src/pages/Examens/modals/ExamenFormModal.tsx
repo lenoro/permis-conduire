@@ -20,7 +20,7 @@ export default function ExamenFormModal({ onClose, onSaved }: Props) {
   const handleSave = async () => {
     if (!candidatId) return alert('Sélectionner un candidat');
     if (!dateExamen) return alert('Saisir une date');
-    await addExamen(Number(candidatId), { typeEpreuve, dateExamen, observation } as any);
+    await addExamen(Number(candidatId), { typeEpreuve, dateExamen, observation });
     onSaved();
   };
 
