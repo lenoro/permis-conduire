@@ -4,8 +4,9 @@ import InfosTab from './tabs/InfosTab';
 import DocumentsTab from './tabs/DocumentsTab';
 import ExamensTab from './tabs/ExamensTab';
 import PaiementsTab from './tabs/PaiementsTab';
+import NotificationsTab from './tabs/NotificationsTab';
 
-const TABS = ['👤 Infos', '📄 Documents', '📝 Examens', '💰 Paiements'];
+const TABS = ['👤 Infos', '📄 Documents', '📝 Examens', '💰 Paiements', '🔔 Notifications'];
 
 interface Props { candidat: Candidat | null; onClose: () => void; }
 
@@ -50,6 +51,7 @@ export default function CandidatModal({ candidat, onClose }: Props) {
           {tab === 1 && candidat && <DocumentsTab candidatId={candidat.id!} />}
           {tab === 2 && candidat && <ExamensTab candidatId={candidat.id!} />}
           {tab === 3 && candidat && <PaiementsTab candidatId={candidat.id!} />}
+          {tab === 4 && candidat && <NotificationsTab candidatId={candidat.id!} />}
         </div>
       </div>
     </div>
