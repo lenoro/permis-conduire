@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
 import type { Examen, TypeEpreuve, ResultatExamen, StatutExamen } from '../../../types';
-import { getExamens, addExamen, deleteExamen, annulerExamen } from '../../../api/examenApi';
+import { getExamens, addExamen, deleteExamen, annulerExamen, updateExamen } from '../../../api/examenApi';
 import Badge from '../../../components/Badge';
+
+const RESULTATS: ResultatExamen[] = ['ADMIS', 'AJOURNE', 'ABSENT'];
 
 export default function ExamensTab({ candidatId }: { candidatId: number }) {
   const [examens, setExamens] = useState<Examen[]>([]);
@@ -9,6 +11,9 @@ export default function ExamensTab({ candidatId }: { candidatId: number }) {
     typeEpreuve: 'CODE', resultat: 'ADMIS',
     dateExamen: new Date().toISOString().slice(0, 16), observation: '',
   });
+  const [editId, setEditId] = useState<number | null>(null);
+  const [editResultat, setEditResultat] = useState<ResultatExamen>('ADMIS');
+  const [editObs, setEditObs] = useState('');
 
   const load = () => getExamens(candidatId).then(setExamens);
   useEffect(() => { load(); }, [candidatId]);
@@ -21,22 +26,29 @@ export default function ExamensTab({ candidatId }: { candidatId: number }) {
   };
 
   const del = async (id: number) => {
-    try {
-      await deleteExamen(id);
-      await load();
-    } catch {
-      alert('Erreur lors de la suppression');
-    }
+    try { await deleteExamen(id); await load(); }
+    catch { alert('Erreur lors de la suppression'); }
   };
 
   const handleAnnuler = async (id: number) => {
     if (!confirm('Confirmer l\'annulation ?')) return;
+    try { await annulerExamen(id); await load(); }
+    catch { alert('Erreur lors de l\'annulation'); }
+  };
+
+  const startEdit = (e: Examen) => {
+    setEditId(e.id!);
+    setEditResultat(e.resultat ?? 'ADMIS');
+    setEditObs(e.observation ?? '');
+  };
+
+  const saveEdit = async () => {
+    if (!editId) return;
     try {
-      await annulerExamen(id);
+      await updateExamen(editId, { resultat: editResultat, observation: editObs, statut: 'REALISE' });
+      setEditId(null);
       await load();
-    } catch {
-      alert('Erreur lors de l\'annulation');
-    }
+    } catch { alert('Erreur lors de la modification'); }
   };
 
   return (
@@ -57,7 +69,7 @@ export default function ExamensTab({ candidatId }: { candidatId: number }) {
             <label style={{ fontSize: 11, color: '#888', display: 'block', marginBottom: 4 }}>Résultat</label>
             <select value={form.resultat} onChange={e => setForm(f => ({ ...f, resultat: e.target.value as ResultatExamen }))}
               style={{ width: '100%', padding: '7px 10px', border: '1px solid #e0e0e0', borderRadius: 6, fontSize: 13 }}>
-              {(['ADMIS', 'AJOURNE', 'ABSENT'] as ResultatExamen[]).map(r => <option key={r}>{r}</option>)}
+              {RESULTATS.map(r => <option key={r}>{r}</option>)}
             </select>
           </div>
           <div>
@@ -83,30 +95,63 @@ export default function ExamensTab({ candidatId }: { candidatId: number }) {
 
       {examens.map(e => (
         <div key={e.id}
-          style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                   padding: '10px 14px', background: '#fff', borderRadius: 8,
-                   marginBottom: 8, border: '1px solid #e0e0e0' }}>
-          <div>
-            <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-              <Badge value={e.typeEpreuve} />
-              <Badge value={e.resultat ?? ''} />
-              <span style={{ background: (e.statut as StatutExamen) === 'PLANIFIE' ? '#fff3e0' : (e.statut as StatutExamen) === 'ANNULE' ? '#ffebee' : '#e8f5e9', padding: '2px 8px', borderRadius: 4, fontSize: 11 }}>{e.statut ?? 'PLANIFIE'}</span>
+          style={{ background: '#fff', borderRadius: 8, marginBottom: 8, border: '1px solid #e0e0e0', overflow: 'hidden' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 14px' }}>
+            <div>
+              <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                <Badge value={e.typeEpreuve} />
+                <Badge value={e.resultat ?? ''} />
+                <span style={{ background: (e.statut as StatutExamen) === 'PLANIFIE' ? '#fff3e0' : (e.statut as StatutExamen) === 'ANNULE' ? '#ffebee' : '#e8f5e9', padding: '2px 8px', borderRadius: 4, fontSize: 11 }}>{e.statut ?? 'PLANIFIE'}</span>
+              </div>
+              <div style={{ fontSize: 12, color: '#888', marginTop: 4 }}>{e.dateExamen?.slice(0, 16)}</div>
+              {e.observation && <div style={{ fontSize: 12, color: '#555' }}>{e.observation}</div>}
             </div>
-            <div style={{ fontSize: 12, color: '#888', marginTop: 4 }}>{e.dateExamen?.slice(0, 16)}</div>
-            {e.observation && <div style={{ fontSize: 12, color: '#555' }}>{e.observation}</div>}
+            <div style={{ display: 'flex', gap: 6 }}>
+              {e.statut !== 'ANNULE' && (
+                <button onClick={() => editId === e.id ? setEditId(null) : startEdit(e)}
+                  style={{ padding: '4px 10px', fontSize: 11, border: '1px solid #1976d2', borderRadius: 4,
+                           cursor: 'pointer', background: editId === e.id ? '#e3f2fd' : 'none', color: '#1976d2' }}>
+                  Modifier
+                </button>
+              )}
+              {(e.statut === 'PLANIFIE' || !e.statut) && (
+                <button onClick={() => handleAnnuler(e.id!)}
+                  style={{ padding: '4px 10px', fontSize: 11, border: '1px solid #d32f2f', borderRadius: 4,
+                           cursor: 'pointer', background: 'none', color: '#d32f2f' }}>
+                  Annuler
+                </button>
+              )}
+              <button onClick={() => del(e.id!)}
+                style={{ padding: '4px 12px', fontSize: 12, border: 'none', borderRadius: 4,
+                         cursor: 'pointer', background: '#ffebee', color: '#c62828' }}>✕</button>
+            </div>
           </div>
-          <div style={{ display: 'flex', gap: 6 }}>
-            {(e.statut === 'PLANIFIE' || !e.statut) && (
-              <button onClick={() => handleAnnuler(e.id!)}
-                style={{ padding: '4px 10px', fontSize: 11, border: '1px solid #d32f2f', borderRadius: 4,
-                         cursor: 'pointer', background: 'none', color: '#d32f2f' }}>
+
+          {editId === e.id && (
+            <div style={{ borderTop: '1px solid #e0e0e0', padding: '10px 14px', background: '#f8f9fa',
+                          display: 'flex', gap: 10, alignItems: 'flex-end' }}>
+              <div>
+                <label style={{ fontSize: 11, color: '#888', display: 'block', marginBottom: 4 }}>Résultat</label>
+                <select value={editResultat} onChange={e2 => setEditResultat(e2.target.value as ResultatExamen)}
+                  style={{ padding: '6px 10px', border: '1px solid #e0e0e0', borderRadius: 6, fontSize: 13 }}>
+                  {RESULTATS.map(r => <option key={r}>{r}</option>)}
+                </select>
+              </div>
+              <div style={{ flex: 1 }}>
+                <label style={{ fontSize: 11, color: '#888', display: 'block', marginBottom: 4 }}>Observation</label>
+                <input value={editObs} onChange={e2 => setEditObs(e2.target.value)}
+                  style={{ width: '100%', padding: '6px 10px', border: '1px solid #e0e0e0', borderRadius: 6, fontSize: 13, boxSizing: 'border-box' }} />
+              </div>
+              <button onClick={saveEdit}
+                style={{ padding: '6px 16px', background: '#1976d2', color: '#fff', border: 'none', borderRadius: 6, cursor: 'pointer', fontSize: 13 }}>
+                Enregistrer
+              </button>
+              <button onClick={() => setEditId(null)}
+                style={{ padding: '6px 12px', border: '1px solid #ddd', borderRadius: 6, cursor: 'pointer', background: 'white', fontSize: 13 }}>
                 Annuler
               </button>
-            )}
-            <button onClick={() => del(e.id!)}
-              style={{ padding: '4px 12px', fontSize: 12, border: 'none', borderRadius: 4,
-                       cursor: 'pointer', background: '#ffebee', color: '#c62828' }}>✕</button>
-          </div>
+            </div>
+          )}
         </div>
       ))}
     </div>

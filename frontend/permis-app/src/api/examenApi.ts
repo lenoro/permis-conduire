@@ -17,6 +17,9 @@ export const addExamen = (candidatId: number, e: Examen) =>
 export const deleteExamen = (id: number) =>
   axios.delete(`/api/examens/${id}`, { auth });
 
+export const updateExamen = (id: number, data: Partial<Examen>): Promise<Examen> =>
+  axios.put<Examen>(`/api/examens/${id}`, data, { auth }).then(r => r.data);
+
 export const annulerExamen = (id: number): Promise<Examen> =>
   axios.put<Examen>(`/api/examens/${id}/annuler`, {}, { auth }).then(r => r.data);
 

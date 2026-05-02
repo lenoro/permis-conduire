@@ -37,6 +37,15 @@ public class ExamenService {
         return examenRepository.save(examen);
     }
 
+    public Examen update(Long id, Examen data) {
+        Examen examen = examenRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Examen non trouvé: " + id));
+        examen.setResultat(data.getResultat());
+        examen.setObservation(data.getObservation());
+        if (data.getStatut() != null) examen.setStatut(data.getStatut());
+        return examenRepository.save(examen);
+    }
+
     public void delete(Long id) {
         examenRepository.deleteById(id);
     }

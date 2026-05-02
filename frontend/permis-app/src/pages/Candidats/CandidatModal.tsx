@@ -12,6 +12,12 @@ interface Props { candidat: Candidat | null; onClose: () => void; }
 
 export default function CandidatModal({ candidat, onClose }: Props) {
   const [tab, setTab] = useState(0);
+  const [current, setCurrent] = useState<Candidat | null>(candidat);
+
+  const handleSaved = (saved?: Candidat) => {
+    if (saved) { setCurrent(saved); }
+    else { onClose(); }
+  };
 
   return (
     <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)',
@@ -24,7 +30,7 @@ export default function CandidatModal({ candidat, onClose }: Props) {
                       borderRadius: '12px 12px 0 0', display: 'flex',
                       justifyContent: 'space-between', alignItems: 'center' }}>
           <span style={{ fontWeight: 700, fontSize: 16 }}>
-            {candidat ? `${candidat.nom} ${candidat.prenom}` : 'Nouveau candidat'}
+            {current ? `${current.nom} ${current.prenom}` : 'Nouveau candidat'}
           </span>
           <button onClick={onClose}
             style={{ background: 'none', border: 'none', color: '#fff',
@@ -32,7 +38,7 @@ export default function CandidatModal({ candidat, onClose }: Props) {
         </div>
 
         {/* Tabs */}
-        {candidat && (
+        {current && (
           <div style={{ display: 'flex', borderBottom: '2px solid #e0e0e0', background: '#f8f9fa' }}>
             {TABS.map((t, i) => (
               <button key={t} onClick={() => setTab(i)}
@@ -47,11 +53,11 @@ export default function CandidatModal({ candidat, onClose }: Props) {
 
         {/* Content */}
         <div style={{ flex: 1, overflowY: 'auto', padding: 24 }}>
-          {(tab === 0 || !candidat) && <InfosTab candidat={candidat} onSaved={onClose} />}
-          {tab === 1 && candidat && <DocumentsTab candidatId={candidat.id!} />}
-          {tab === 2 && candidat && <ExamensTab candidatId={candidat.id!} />}
-          {tab === 3 && candidat && <PaiementsTab candidatId={candidat.id!} />}
-          {tab === 4 && candidat && <NotificationsTab candidatId={candidat.id!} />}
+          {(tab === 0 || !current) && <InfosTab candidat={current} onSaved={handleSaved} />}
+          {tab === 1 && current && <DocumentsTab candidatId={current.id!} />}
+          {tab === 2 && current && <ExamensTab candidatId={current.id!} />}
+          {tab === 3 && current && <PaiementsTab candidatId={current.id!} />}
+          {tab === 4 && current && <NotificationsTab candidatId={current.id!} />}
         </div>
       </div>
     </div>

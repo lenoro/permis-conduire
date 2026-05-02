@@ -5,7 +5,7 @@ import { createCandidat, updateCandidat, uploadPhoto, getPhotoUrl } from '../../
 const STATUTS: StatutDossier[] = ['INCOMPLET', 'EN_COURS', 'VALIDE', 'ARCHIVE'];
 const CATEGORIES = ['A', 'B', 'C', 'C1', 'D', 'BE'];
 
-interface Props { candidat: Candidat | null; onSaved: () => void; }
+interface Props { candidat: Candidat | null; onSaved: (saved?: Candidat) => void; }
 
 const empty: Candidat = {
   nom: '', prenom: '', dateNaissance: '', numTelephone: '', adresse: '',
@@ -16,15 +16,21 @@ const empty: Candidat = {
 export default function InfosTab({ candidat, onSaved }: Props) {
   const [form, setForm] = useState<Candidat>(candidat ?? empty);
   const [photoKey, setPhotoKey] = useState(0);
+  const [savedId, setSavedId] = useState<number | undefined>(candidat?.id);
 
   const set = (field: keyof Candidat, value: string) =>
     setForm(f => ({ ...f, [field]: value }));
 
   const save = async () => {
     try {
-      if (candidat?.id) await updateCandidat(candidat.id, form);
-      else await createCandidat(form);
-      onSaved();
+      if (candidat?.id) {
+        await updateCandidat(candidat.id, form);
+        onSaved();
+      } else {
+        const created = await createCandidat(form);
+        setSavedId(created.id);
+        onSaved(created);
+      }
     } catch {
       alert('Erreur lors de l\'enregistrement');
     }
@@ -32,10 +38,11 @@ export default function InfosTab({ candidat, onSaved }: Props) {
 
   const handlePhotoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (!file || !candidat?.id) return;
+    const id = savedId ?? candidat?.id;
+    if (!file || !id) return;
     if (file.size > 5 * 1024 * 1024) return alert('La photo ne doit pas dépasser 5 MB');
     try {
-      await uploadPhoto(candidat.id, file);
+      await uploadPhoto(id, file);
       setPhotoKey(k => k + 1);
     } catch {
       alert('Erreur lors de l\'upload de la photo');
@@ -56,10 +63,10 @@ export default function InfosTab({ candidat, onSaved }: Props) {
     <div style={{ display: 'flex', gap: 20, alignItems: 'flex-start' }}>
       {/* Photo zone */}
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, minWidth: 90 }}>
-        {candidat?.id && candidat?.photoPath ? (
+        {savedId && candidat?.photoPath ? (
           <img
             key={photoKey}
-            src={getPhotoUrl(candidat.id)}
+            src={getPhotoUrl(savedId)}
             alt="photo"
             style={{ width: 80, height: 100, objectFit: 'cover', borderRadius: 4, border: '1px solid #ddd' }}
           />
@@ -68,9 +75,9 @@ export default function InfosTab({ candidat, onSaved }: Props) {
             Pas de photo
           </div>
         )}
-        {candidat?.id && (
+        {savedId && (
           <label style={{ fontSize: 11, color: '#1a237e', cursor: 'pointer', textDecoration: 'underline' }}>
-            Changer photo
+            {candidat?.photoPath ? 'Changer photo' : 'Ajouter photo'}
             <input type="file" accept=".jpg,.jpeg,.png" onChange={handlePhotoChange} style={{ display: 'none' }} />
           </label>
         )}

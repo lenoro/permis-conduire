@@ -24,6 +24,11 @@ public class ExamenController {
         return service.add(id, examen);
     }
 
+    @PutMapping("/api/examens/{id}")
+    public Examen update(@PathVariable Long id, @RequestBody Examen examen) {
+        return service.update(id, examen);
+    }
+
     @DeleteMapping("/api/examens/{id}")
     public void delete(@PathVariable Long id) { service.delete(id); }
 
