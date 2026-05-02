@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import type { Paiement } from '../../../types';
+import type { ModePaiement, Paiement } from '../../../types';
 import { getPaiements, addPaiement, deletePaiement } from '../../../api/paiementApi';
 
 const MODES = ['Espèces', 'Chèque', 'CCP'];
@@ -43,7 +43,7 @@ export default function PaiementsTab({ candidatId }: { candidatId: number }) {
           </div>
           <div>
             <label style={{ fontSize: 11, color: '#888', display: 'block', marginBottom: 4 }}>Mode</label>
-            <select value={form.modePaiement} onChange={e => setForm(f => ({ ...f, modePaiement: e.target.value }))}
+            <select value={form.modePaiement} onChange={e => setForm(f => ({ ...f, modePaiement: e.target.value as ModePaiement }))}
               style={{ width: '100%', padding: '7px 10px', border: '1px solid #e0e0e0', borderRadius: 6, fontSize: 13 }}>
               {MODES.map(m => <option key={m}>{m}</option>)}
             </select>

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { getCandidats } from '../../../api/candidatApi';
 import { addPaiement } from '../../../api/paiementApi';
-import type { Candidat } from '../../../types';
+import type { Candidat, ModePaiement } from '../../../types';
 
 interface Props {
   onClose: () => void;
@@ -21,7 +21,7 @@ export default function PaiementFormModal({ onClose, onSaved }: Props) {
     if (!candidatId) return alert('Sélectionner un candidat');
     if (!montant || Number(montant) <= 0) return alert('Saisir un montant valide');
     try {
-      await addPaiement(Number(candidatId), { montant: Number(montant), modePaiement, datePaiement });
+      await addPaiement(Number(candidatId), { montant: Number(montant), modePaiement: modePaiement as ModePaiement, datePaiement });
       onSaved();
     } catch {
       alert('Erreur lors de l\'enregistrement');

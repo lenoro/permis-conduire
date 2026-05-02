@@ -60,9 +60,9 @@ export default function ExamensPage() {
             <tr key={e.id} style={{ borderBottom: '1px solid #eee' }}>
               <td style={{ padding: '8px 12px' }}>
                 <span
-                  onClick={() => navigate(`/candidats/${e.candidat.id}/historique`)}
+                  onClick={() => navigate(`/candidats/${e.candidat?.id}/historique`)}
                   style={{ color: '#1a237e', cursor: 'pointer', textDecoration: 'underline' }}>
-                  {e.candidat.nom} {e.candidat.prenom}
+                  {e.candidat?.nom} {e.candidat?.prenom}
                 </span>
               </td>
               <td style={{ padding: '8px 12px' }}>
@@ -78,7 +78,7 @@ export default function ExamensPage() {
               <td style={{ padding: '8px 12px', fontSize: 13 }}>{e.observation ?? '—'}</td>
               <td style={{ padding: '8px 12px' }}>
                 {(!e.statut || e.statut === 'PLANIFIE') && (
-                  <button onClick={() => handleAnnuler(e.id)}
+                  <button onClick={() => handleAnnuler(e.id!)}
                     style={{ background: 'none', border: '1px solid #d32f2f', color: '#d32f2f', padding: '2px 10px', borderRadius: 4, cursor: 'pointer', fontSize: 12 }}>
                     Annuler
                   </button>

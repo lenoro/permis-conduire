@@ -21,7 +21,8 @@ export default function BatchExamenModal({ onClose, onSaved }: Props) {
     );
   }, []);
 
-  const toggle = (id: number) => {
+  const toggle = (id: number | undefined) => {
+    if (id === undefined) return;
     const next = new Set(selected);
     next.has(id) ? next.delete(id) : next.add(id);
     setSelected(next);
@@ -67,8 +68,8 @@ export default function BatchExamenModal({ onClose, onSaved }: Props) {
             <div style={{ border: '1px solid #ddd', borderRadius: 4, maxHeight: 200, overflowY: 'auto' }}>
               {candidats.map(c => (
                 <div key={c.id} onClick={() => toggle(c.id)}
-                  style={{ padding: '8px 12px', display: 'flex', alignItems: 'center', gap: 10, borderBottom: '1px solid #f0f0f0', cursor: 'pointer', background: selected.has(c.id) ? '#e8f0fe' : 'white' }}>
-                  <input type="checkbox" checked={selected.has(c.id)} onChange={() => toggle(c.id)} />
+                  style={{ padding: '8px 12px', display: 'flex', alignItems: 'center', gap: 10, borderBottom: '1px solid #f0f0f0', cursor: 'pointer', background: c.id !== undefined && selected.has(c.id) ? '#e8f0fe' : 'white' }}>
+                  <input type="checkbox" checked={c.id !== undefined && selected.has(c.id)} onChange={() => toggle(c.id)} />
                   <span>{c.nom} {c.prenom}</span>
                   <span style={{ marginLeft: 'auto', fontSize: 12, color: '#999' }}>{c.statutDossier}</span>
                 </div>
