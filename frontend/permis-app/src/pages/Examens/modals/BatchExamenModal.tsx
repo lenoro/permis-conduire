@@ -16,9 +16,7 @@ export default function BatchExamenModal({ onClose, onSaved }: Props) {
   const [observation, setObservation] = useState('');
 
   useEffect(() => {
-    getCandidats().then(all =>
-      setCandidats(all.filter(c => c.statutDossier === 'EN_COURS' || c.statutDossier === 'INCOMPLET'))
-    );
+    getCandidats().then(setCandidats);
   }, []);
 
   const toggle = (id: number | undefined) => {
