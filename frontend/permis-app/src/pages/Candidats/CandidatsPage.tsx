@@ -17,12 +17,16 @@ export default function CandidatsPage() {
   const [showModal, setShowModal] = useState(false);
 
   const load = async () => {
-    const [data, s] = await Promise.all([
-      getCandidats(filtre || undefined, search || undefined),
-      getStatuts(),
-    ]);
-    setCandidats(data);
-    setStats(s as unknown as Record<string, number>);
+    try {
+      const [data, s] = await Promise.all([
+        getCandidats(filtre || undefined, search || undefined),
+        getStatuts(),
+      ]);
+      setCandidats(data);
+      setStats(s as unknown as Record<string, number>);
+    } catch {
+      // API error — keep current state, don't crash
+    }
   };
 
   useEffect(() => { load(); }, [filtre, search]);
