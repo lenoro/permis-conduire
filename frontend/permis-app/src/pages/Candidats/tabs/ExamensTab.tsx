@@ -17,15 +17,26 @@ export default function ExamensTab({ candidatId }: { candidatId: number }) {
     await addExamen(candidatId, form as Examen);
     setForm({ typeEpreuve: 'CODE', resultat: 'ADMIS',
               dateExamen: new Date().toISOString().slice(0, 16), observation: '' });
-    load();
+    await load();
   };
 
-  const del = async (id: number) => { await deleteExamen(id); load(); };
+  const del = async (id: number) => {
+    try {
+      await deleteExamen(id);
+      await load();
+    } catch {
+      alert('Erreur lors de la suppression');
+    }
+  };
 
   const handleAnnuler = async (id: number) => {
     if (!confirm('Confirmer l\'annulation ?')) return;
-    await annulerExamen(id);
-    load();
+    try {
+      await annulerExamen(id);
+      load();
+    } catch {
+      alert('Erreur lors de l\'annulation');
+    }
   };
 
   return (

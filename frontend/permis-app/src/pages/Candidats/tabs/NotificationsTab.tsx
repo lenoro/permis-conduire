@@ -44,6 +44,7 @@ export default function NotificationsTab({ candidatId }: Props) {
           <label style={{ display: 'block', fontSize: 11, fontWeight: 600, marginBottom: 4, textTransform: 'uppercase', color: '#666' }}>Type</label>
           <select value={type} onChange={e => setType(e.target.value as TypeNotification)}
             style={{ padding: '7px 10px', border: '1px solid #ddd', borderRadius: 4 }}>
+            <option value="ANNULATION_EXAMEN">Annulation examen</option>
             <option value="MANQUE_PAIEMENT">Manque paiement</option>
             <option value="AUTRE">Autre</option>
           </select>

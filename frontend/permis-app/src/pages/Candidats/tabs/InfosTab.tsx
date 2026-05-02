@@ -21,17 +21,25 @@ export default function InfosTab({ candidat, onSaved }: Props) {
     setForm(f => ({ ...f, [field]: value }));
 
   const save = async () => {
-    if (candidat?.id) await updateCandidat(candidat.id, form);
-    else await createCandidat(form);
-    onSaved();
+    try {
+      if (candidat?.id) await updateCandidat(candidat.id, form);
+      else await createCandidat(form);
+      onSaved();
+    } catch {
+      alert('Erreur lors de l\'enregistrement');
+    }
   };
 
   const handlePhotoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || !candidat?.id) return;
     if (file.size > 5 * 1024 * 1024) return alert('La photo ne doit pas dépasser 5 MB');
-    await uploadPhoto(candidat.id, file);
-    setPhotoKey(k => k + 1);
+    try {
+      await uploadPhoto(candidat.id, file);
+      setPhotoKey(k => k + 1);
+    } catch {
+      alert('Erreur lors de l\'upload de la photo');
+    }
   };
 
   const field = (label: string, key: keyof Candidat, type = 'text') => (
@@ -56,8 +64,8 @@ export default function InfosTab({ candidat, onSaved }: Props) {
             style={{ width: 80, height: 100, objectFit: 'cover', borderRadius: 4, border: '1px solid #ddd' }}
           />
         ) : (
-          <div style={{ width: 80, height: 100, background: '#f0f0f0', borderRadius: 4, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#bbb', fontSize: 28 }}>
-            📷
+          <div style={{ width: 80, height: 100, background: '#f0f0f0', borderRadius: 4, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#bbb', fontSize: 12, textAlign: 'center' }}>
+            Pas de photo
           </div>
         )}
         {candidat?.id && (
