@@ -24,6 +24,11 @@ public class Examen {
 
     private String observation;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private StatutExamen statut = StatutExamen.PLANIFIE;
+
     public enum TypeEpreuve { CODE, CRENEAU, CONDUITE }
     public enum ResultatExamen { ADMIS, AJOURNE, ABSENT }
+    public enum StatutExamen { PLANIFIE, REALISE, ANNULE }
 }

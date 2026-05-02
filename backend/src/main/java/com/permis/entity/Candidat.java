@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.ArrayList;
+import com.permis.entity.Notification;
 
 @Entity @Data @NoArgsConstructor @AllArgsConstructor @Builder
 public class Candidat {
@@ -20,6 +22,12 @@ public class Candidat {
 
     @Enumerated(EnumType.STRING)
     private StatutDossier statutDossier = StatutDossier.INCOMPLET;
+
+    private String photoPath;
+
+    @OneToMany(mappedBy = "candidat", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<Notification> notifications = new ArrayList<>();
 
     @OneToMany(mappedBy = "candidat", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
