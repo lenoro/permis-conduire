@@ -38,7 +38,7 @@ export interface Examen {
 
 export interface Paiement {
   id?: number;
-  candidat?: { id: number };
+  candidat?: { id: number; nom: string; prenom: string };
   montant: number;
   datePaiement?: string;
   modePaiement?: string;
