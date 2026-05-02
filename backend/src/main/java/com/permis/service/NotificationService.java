@@ -39,10 +39,15 @@ public class NotificationService {
     public Notification creerNotificationManuelle(Long candidatId, Notification notification) {
         Candidat candidat = candidatRepository.findById(candidatId)
             .orElseThrow(() -> new RuntimeException("Candidat non trouvé: " + candidatId));
-        notification.setCandidat(candidat);
-        notification.setDateEnvoi(LocalDateTime.now());
-        notification.setStatut(Notification.StatutNotification.SIMULE);
-        return notificationRepository.save(notification);
+        Notification n = Notification.builder()
+            .candidat(candidat)
+            .type(notification.getType())
+            .canal(notification.getCanal())
+            .message(notification.getMessage())
+            .dateEnvoi(LocalDateTime.now())
+            .statut(Notification.StatutNotification.SIMULE)
+            .build();
+        return notificationRepository.save(n);
     }
 
     public List<Notification> findByCandidat(Long candidatId) {
