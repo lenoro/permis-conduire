@@ -20,8 +20,12 @@ export default function PaiementFormModal({ onClose, onSaved }: Props) {
   const handleSave = async () => {
     if (!candidatId) return alert('Sélectionner un candidat');
     if (!montant || Number(montant) <= 0) return alert('Saisir un montant valide');
-    await addPaiement(Number(candidatId), { montant: Number(montant), modePaiement, datePaiement });
-    onSaved();
+    try {
+      await addPaiement(Number(candidatId), { montant: Number(montant), modePaiement, datePaiement });
+      onSaved();
+    } catch {
+      alert('Erreur lors de l\'enregistrement');
+    }
   };
 
   return (

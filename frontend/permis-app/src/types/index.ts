@@ -41,7 +41,7 @@ export interface Paiement {
   candidat?: { id: number; nom: string; prenom: string };
   montant: number;
   datePaiement?: string;
-  modePaiement?: string;
+  modePaiement?: ModePaiement;
 }
 
 export interface StatutsEtat {
