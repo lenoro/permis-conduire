@@ -4,8 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDate;
 import java.util.*;
-import java.util.ArrayList;
-import com.permis.entity.Notification;
 
 @Entity @Data @NoArgsConstructor @AllArgsConstructor @Builder
 public class Candidat {
