@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/candidats/{id}/photo")
@@ -32,11 +33,21 @@ public class UploadController {
             .orElseThrow(() -> new RuntimeException("Candidat non trouvé: " + id));
 
         String ext = getExtension(file.getOriginalFilename());
+        if (!List.of("jpg", "jpeg", "png").contains(ext)) {
+            throw new org.springframework.web.server.ResponseStatusException(
+                org.springframework.http.HttpStatus.BAD_REQUEST, "Type de fichier non autorisé");
+        }
         String filename = "candidat_" + id + "_" + System.currentTimeMillis() + "." + ext;
 
         Path dir = Paths.get(uploadDir);
         Files.createDirectories(dir);
-        Files.write(dir.resolve(filename), file.getBytes());
+        if (file.getSize() > 5 * 1024 * 1024) {
+            throw new org.springframework.web.server.ResponseStatusException(
+                org.springframework.http.HttpStatus.BAD_REQUEST, "La photo ne doit pas dépasser 5 MB");
+        }
+        try (java.io.InputStream in = file.getInputStream()) {
+            Files.copy(in, dir.resolve(filename));
+        }
 
         candidat.setPhotoPath(filename);
         return candidatRepository.save(candidat);
@@ -51,7 +62,11 @@ public class UploadController {
             return ResponseEntity.notFound().build();
         }
 
-        Path filePath = Paths.get(uploadDir).resolve(candidat.getPhotoPath());
+        Path uploadPath = Paths.get(uploadDir).normalize();
+        Path filePath = uploadPath.resolve(candidat.getPhotoPath()).normalize();
+        if (!filePath.startsWith(uploadPath)) {
+            return ResponseEntity.badRequest().build();
+        }
         if (!Files.exists(filePath)) {
             return ResponseEntity.notFound().build();
         }
