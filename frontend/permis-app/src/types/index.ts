@@ -2,6 +2,7 @@ export type StatutDossier = 'INCOMPLET' | 'EN_COURS' | 'VALIDE' | 'ARCHIVE';
 export type TypeEpreuve = 'CODE' | 'CRENEAU' | 'CONDUITE';
 export type ResultatExamen = 'ADMIS' | 'AJOURNE' | 'ABSENT';
 export type ModePaiement = 'Espèces' | 'Chèque' | 'CCP';
+export type StatutExamen = 'PLANIFIE' | 'REALISE' | 'ANNULE';
 
 export interface Candidat {
   id?: number;
@@ -14,6 +15,7 @@ export interface Candidat {
   dateInscription?: string;
   categorieVisee?: string;
   statutDossier: StatutDossier;
+  photoPath?: string;
 }
 
 export interface Document {
@@ -26,11 +28,12 @@ export interface Document {
 
 export interface Examen {
   id?: number;
-  candidat?: { id: number };
+  candidat?: { id: number; nom: string; prenom: string };
   typeEpreuve: TypeEpreuve;
   dateExamen?: string;
   resultat?: ResultatExamen;
   observation?: string;
+  statut?: StatutExamen;
 }
 
 export interface Paiement {
@@ -47,4 +50,24 @@ export interface StatutsEtat {
   EN_COURS: number;
   VALIDE: number;
   ARCHIVE: number;
+}
+
+export type TypeNotification = 'ANNULATION_EXAMEN' | 'MANQUE_PAIEMENT' | 'AUTRE';
+export type CanalNotification = 'SMS' | 'EMAIL';
+
+export interface Notification {
+  id: number;
+  candidat: { id: number; nom: string; prenom: string };
+  type: TypeNotification;
+  canal: CanalNotification;
+  message: string;
+  dateEnvoi: string;
+  statut: 'SIMULE';
+}
+
+export interface BatchExamenRequest {
+  candidatIds: number[];
+  typeEpreuve: TypeEpreuve;
+  dateExamen: string;
+  observation?: string;
 }

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type { Examen } from '../types';
+import type { Examen, BatchExamenRequest } from '../types';
 
 const auth = { username: 'admin', password: '123' };
 
@@ -16,3 +16,9 @@ export const addExamen = (candidatId: number, e: Examen) =>
 
 export const deleteExamen = (id: number) =>
   axios.delete(`/api/examens/${id}`, { auth });
+
+export const annulerExamen = (id: number): Promise<Examen> =>
+  axios.put<Examen>(`/api/examens/${id}/annuler`, {}, { auth }).then(r => r.data);
+
+export const addBatchExamen = (req: BatchExamenRequest): Promise<Examen[]> =>
+  axios.post<Examen[]>('/api/examens/batch', req, { auth }).then(r => r.data);
