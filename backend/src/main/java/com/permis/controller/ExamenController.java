@@ -1,5 +1,6 @@
 package com.permis.controller;
 
+import com.permis.dto.BatchExamenRequest;
 import com.permis.entity.Examen;
 import com.permis.service.ExamenService;
 import lombok.RequiredArgsConstructor;
@@ -25,4 +26,14 @@ public class ExamenController {
 
     @DeleteMapping("/api/examens/{id}")
     public void delete(@PathVariable Long id) { service.delete(id); }
+
+    @PutMapping("/api/examens/{id}/annuler")
+    public Examen annulerExamen(@PathVariable Long id) {
+        return service.annuler(id);
+    }
+
+    @PostMapping("/api/examens/batch")
+    public List<Examen> addBatchExamen(@RequestBody BatchExamenRequest req) {
+        return service.addBatch(req);
+    }
 }
