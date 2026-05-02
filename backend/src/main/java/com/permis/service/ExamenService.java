@@ -7,6 +7,7 @@ import com.permis.repository.CandidatRepository;
 import com.permis.repository.ExamenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -45,10 +46,11 @@ public class ExamenService {
             .orElseThrow(() -> new RuntimeException("Examen non trouvé: " + id));
         examen.setStatut(Examen.StatutExamen.ANNULE);
         Examen saved = examenRepository.save(examen);
-        notificationService.creerNotificationAnnulation(examen);
+        notificationService.creerNotificationAnnulation(saved);
         return saved;
     }
 
+    @Transactional
     public List<Examen> addBatch(BatchExamenRequest req) {
         return req.getCandidatIds().stream().map(candidatId -> {
             Candidat candidat = candidatRepository.findById(candidatId)
