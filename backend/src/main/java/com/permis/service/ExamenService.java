@@ -1,6 +1,7 @@
 package com.permis.service;
 
 import com.permis.dto.BatchExamenRequest;
+import com.permis.dto.BatchResultatRequest;
 import com.permis.entity.Candidat;
 import com.permis.entity.Examen;
 import com.permis.repository.CandidatRepository;
@@ -57,6 +58,18 @@ public class ExamenService {
         Examen saved = examenRepository.save(examen);
         notificationService.creerNotificationAnnulation(saved);
         return saved;
+    }
+
+    @Transactional
+    public List<Examen> batchUpdateResultats(BatchResultatRequest req) {
+        return req.getResultats().stream().map(item -> {
+            Examen examen = examenRepository.findById(item.getId())
+                .orElseThrow(() -> new RuntimeException("Examen non trouvé: " + item.getId()));
+            examen.setResultat(item.getResultat());
+            examen.setObservation(item.getObservation());
+            examen.setStatut(Examen.StatutExamen.REALISE);
+            return examenRepository.save(examen);
+        }).toList();
     }
 
     @Transactional

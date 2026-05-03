@@ -25,3 +25,6 @@ export const annulerExamen = (id: number): Promise<Examen> =>
 
 export const addBatchExamen = (req: BatchExamenRequest): Promise<Examen[]> =>
   axios.post<Examen[]>('/api/examens/batch', req, { auth }).then(r => r.data);
+
+export const batchUpdateResultats = (resultats: { id: number; resultat: string; observation: string }[]): Promise<Examen[]> =>
+  axios.put<Examen[]>('/api/examens/batch-resultats', { resultats }, { auth }).then(r => r.data);

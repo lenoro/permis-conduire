@@ -1,6 +1,7 @@
 package com.permis.controller;
 
 import com.permis.dto.BatchExamenRequest;
+import com.permis.dto.BatchResultatRequest;
 import com.permis.entity.Examen;
 import com.permis.service.ExamenService;
 import lombok.RequiredArgsConstructor;
@@ -40,5 +41,10 @@ public class ExamenController {
     @PostMapping("/api/examens/batch")
     public List<Examen> addBatchExamen(@RequestBody BatchExamenRequest req) {
         return service.addBatch(req);
+    }
+
+    @PutMapping("/api/examens/batch-resultats")
+    public List<Examen> batchUpdateResultats(@RequestBody BatchResultatRequest req) {
+        return service.batchUpdateResultats(req);
     }
 }
